@@ -4,7 +4,7 @@ import Catalog from "@/pages/Catalog"
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/shepel-ecosystem-foundation">
       <Routes>
         <Route path="/" element={<Navigate to="/updates" replace />} />
         <Route path="/updates" element={<Updates />} />
