@@ -4,7 +4,8 @@ import { Footer } from "@/components/Footer"
 import { Button } from "@/components/ui/button"
 import { useReveal } from "@/hooks/useReveal"
 import { useParallax } from "@/hooks/useParallax"
-import { Sparkles, TrendingDown, CheckCircle2, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react"
+import { TrendingDown, CheckCircle2, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react"
+import { GradientSparkle } from "@/components/GradientSparkle"
 
 const img = (id: string, w = 1200) =>
   `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop`
@@ -82,7 +83,7 @@ export default function Updates() {
         className={`fixed inset-x-0 top-0 z-[70] flex items-center justify-center gap-4 bg-ink px-5 py-3 text-sm text-white transition-transform duration-300 ${promoShown && !promoClosed ? "translate-y-0" : "-translate-y-[120%]"}`}
       >
         <span>Shepel Property — новый заход на таргет. Смотри объекты.</span>
-        <Button size="sm" variant="accent">Смотреть →</Button>
+        <Button size="sm" variant="default">Смотреть →</Button>
         <button onClick={() => setPromoClosed(true)} className="text-lg text-white/70" aria-label="Закрыть">×</button>
       </div>
 
@@ -100,7 +101,7 @@ export default function Updates() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/60" />
             <div className="absolute right-[8%] top-1/3 hidden max-w-[230px] rounded-2xl bg-white p-4 text-sm font-semibold leading-snug text-ink shadow-2xl sm:block">
               <div className="mb-1 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-accent">
-                <Sparkles size={12} /> Настя, ИИ-бот
+                <GradientSparkle size={12} /> Настя, ИИ-бот
               </div>
               Покажи виллы у моря до 20 млн ₽ с бассейном
             </div>
@@ -272,7 +273,7 @@ export default function Updates() {
           <p className="text-base leading-relaxed text-white/80">
             Умный поиск — только начало. Premium открывает персонального менеджера, приоритетный показ и расширенную аналитику цен по району.
           </p>
-          <Button variant="accent" className="mt-5">Узнать про Premium</Button>
+          <Button variant="default" className="mt-5">Узнать про Premium</Button>
         </div>
       </section>
 

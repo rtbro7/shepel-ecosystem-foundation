@@ -3,13 +3,16 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-bold transition-all disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-ink text-white hover:-translate-y-0.5 hover:shadow-lg",
-        accent: "bg-accent text-accent-ink hover:-translate-y-0.5 hover:shadow-lg",
-        outline: "border border-neutral-300 bg-transparent hover:bg-neutral-100",
+        // Solid Google Blue (#1A73E8) — the real home.google.com primary CTA color.
+        default: "bg-accent text-accent-ink hover:brightness-110 hover:shadow-md",
+        // Dark pill — Google's secondary solid button, for use on colored/photo sections.
+        accent: "bg-ink text-white hover:brightness-125 hover:shadow-md",
+        // 2px purple outline pill — matches the real promo-bar "Buy now" style (#2B0E44).
+        outline: "border-2 border-[#2b0e44] text-[#2b0e44] bg-transparent hover:bg-[#2b0e44]/5",
         ghost: "hover:bg-neutral-100",
       },
       size: {

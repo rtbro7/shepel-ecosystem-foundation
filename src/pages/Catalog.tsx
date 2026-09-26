@@ -3,6 +3,7 @@ import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { useParallax } from "@/hooks/useParallax"
 import { Plus, Palmtree, Building2, Home, Ruler, Check } from "lucide-react"
+import { GradientSparkle } from "@/components/GradientSparkle"
 
 const img = (id: string, w = 1200) =>
   `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop`
@@ -64,7 +65,9 @@ export default function Catalog() {
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/60" />
             <div className="absolute right-[8%] top-[22%] hidden max-w-[230px] rounded-2xl bg-white p-4 text-sm font-semibold leading-snug text-ink shadow-2xl sm:block">
-              <div className="mb-1 text-[11px] font-extrabold uppercase tracking-wide text-accent">✦ Подбор за 30 сек</div>
+              <div className="mb-1 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-accent">
+                <GradientSparkle size={12} /> Подбор за 30 сек
+              </div>
               Вилла 3BR, бюджет 15–20М, готова к заселению
             </div>
             <div className="relative z-10 w-full p-9 pb-11 text-white">
