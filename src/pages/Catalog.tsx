@@ -2,6 +2,8 @@ import { useState } from "react"
 import { Header } from "@/components/Header"
 import { Footer } from "@/components/Footer"
 import { useParallax } from "@/hooks/useParallax"
+import { useTilt } from "@/hooks/useTilt"
+import { Counter } from "@/components/Counter"
 import { Plus, Palmtree, Building2, Home, Ruler, Check } from "lucide-react"
 import { GradientSparkle } from "@/components/GradientSparkle"
 
@@ -15,6 +17,11 @@ const IMG = {
   housePalm: "photo-1719887805632-de5be825f72b",
   housePoolGreen: "photo-1721989519334-40923a0ee1c0",
   couchLiving: "photo-1728048756806-6832d2f5054c",
+  poolLounge: "photo-1596178067639-5c6e68aea6dc",
+  poolUmbrella: "photo-1692736933760-8a8a9b8c1b6f",
+  poolTable: "photo-1721989518229-3e84837fc398",
+  poolTerrace: "photo-1543489822-c49534f3271f",
+  poolView: "photo-1651108066220-f61c22fc281f",
 }
 
 const CATEGORIES = [
@@ -29,7 +36,7 @@ const AREAS = ["Все районы", "Бангтао / Лагуна", "Рава
 const OBJECTS = [
   { id: IMG.villaPool, title: "Вилла 3BR, Бангтао", sub: "Готова к заселению, бассейн, 5 мин до пляжа", price: "от 18 500 000 ₽" },
   { id: IMG.livingModern, title: "Кондо 1BR, Раваи", sub: "Сдача 2027, рассрочка от застройщика", price: "от 6 200 000 ₽" },
-  { id: IMG.housePalm, title: "Таунхаус, Кату", sub: "Вторичка, готовый арендный поток", price: "от 9 800 000 ₽" },
+  { id: IMG.poolTable, title: "Таунхаус, Кату", sub: "Вторичка, готовый арендный поток", price: "от 9 800 000 ₽" },
 ]
 
 const UPDATES = [
@@ -47,6 +54,8 @@ const FAQ = [
 
 export default function Catalog() {
   const parallax = useParallax()
+  const badgeParallax = useParallax(-0.06, 40)
+  const tilt = useTilt<HTMLDivElement>(6)
   const [area, setArea] = useState(AREAS[0])
   const [openFaq, setOpenFaq] = useState(0)
 
@@ -64,7 +73,13 @@ export default function Catalog() {
               style={{ transform: `scale(1.02) translateY(${parallax}px)` }}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/60" />
-            <div className="absolute right-[8%] top-[22%] hidden max-w-[230px] rounded-2xl bg-white p-4 text-sm font-semibold leading-snug text-ink shadow-2xl sm:block">
+            <div
+              ref={tilt.ref}
+              onMouseMove={tilt.onMouseMove}
+              onMouseLeave={tilt.onMouseLeave}
+              className="absolute right-[8%] top-[22%] hidden max-w-[230px] cursor-default rounded-2xl bg-white p-4 text-sm font-semibold leading-snug text-ink shadow-2xl transition-transform duration-200 sm:block"
+              style={{ transform: `translateY(${badgeParallax}px)` }}
+            >
               <div className="mb-1 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-accent">
                 <GradientSparkle size={12} /> Подбор за 30 сек
               </div>
@@ -111,6 +126,16 @@ export default function Catalog() {
               <p className="text-base leading-relaxed text-muted">
                 Каждый объект — с подтверждённым статусом стройки и прайсом застройщика. Значок «Проверено» = мы лично сверили документы и остатки.
               </p>
+              <div className="mt-3 flex gap-6">
+                <div>
+                  <div className="text-xl font-bold"><Counter to={1240} suffix="+" /></div>
+                  <div className="text-xs text-muted">объектов в базе</div>
+                </div>
+                <div>
+                  <div className="text-xl font-bold"><Counter to={98} suffix="%" /></div>
+                  <div className="text-xs text-muted">точность цены</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -140,8 +165,10 @@ export default function Catalog() {
           <h3 className="mb-5 text-xl font-bold">Актуальные объекты недели</h3>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {OBJECTS.map((o) => (
-              <div key={o.title} className="overflow-hidden rounded-2xl bg-white shadow-[0_8px_26px_rgba(0,0,0,0.06)] transition-all hover:-translate-y-1.5 hover:shadow-xl">
-                <img src={img(o.id, 800)} alt="" className="aspect-[16/10] w-full object-cover" />
+              <div key={o.title} className="group overflow-hidden rounded-2xl bg-white shadow-[0_8px_26px_rgba(0,0,0,0.06)] transition-all hover:-translate-y-1.5 hover:shadow-xl">
+                <div className="overflow-hidden">
+                  <img src={img(o.id, 800)} alt="" className="aspect-[16/10] w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                </div>
                 <div className="p-4.5">
                   <h4 className="mb-1.5 text-[15px] font-semibold">{o.title}</h4>
                   <p className="mb-2.5 text-[13px] leading-relaxed text-muted">{o.sub}</p>

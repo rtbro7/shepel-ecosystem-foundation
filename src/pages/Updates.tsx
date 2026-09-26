@@ -4,6 +4,8 @@ import { Footer } from "@/components/Footer"
 import { Button } from "@/components/ui/button"
 import { useReveal } from "@/hooks/useReveal"
 import { useParallax } from "@/hooks/useParallax"
+import { useTilt } from "@/hooks/useTilt"
+import { Counter } from "@/components/Counter"
 import { TrendingDown, CheckCircle2, MessageCircle, ChevronLeft, ChevronRight } from "lucide-react"
 import { GradientSparkle } from "@/components/GradientSparkle"
 
@@ -17,7 +19,17 @@ const IMG = {
   housePalm: "photo-1719887805632-de5be825f72b",
   housePoolGreen: "photo-1721989519334-40923a0ee1c0",
   couchLiving: "photo-1728048756806-6832d2f5054c",
+  poolLounge: "photo-1596178067639-5c6e68aea6dc",
+  poolUmbrella: "photo-1692736933760-8a8a9b8c1b6f",
+  poolTable: "photo-1721989518229-3e84837fc398",
+  poolTerrace: "photo-1543489822-c49534f3271f",
+  poolView: "photo-1651108066220-f61c22fc281f",
 }
+
+const HERO_SLIDES = [
+  { id: IMG.villaPool, title: ["Новые фишки,", "которые меняют всё"] },
+  { id: IMG.poolTerrace, title: ["Твой дом на Пхукете,", "на шаг ближе"] },
+]
 
 const NOTIFICATIONS = [
   { Icon: TrendingDown, title: "Цена снижена", sub: "Вилла 3BR, Бангтао", price: "18.5 → 16.3М" },
@@ -30,7 +42,7 @@ function Reveal({ children, delay = 0, className = "" }: { children: React.React
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${visible ? "translate-y-0 opacity-100" : "translate-y-7 opacity-0"} ${className}`}
+      className={`transition-all duration-700 ease-out ${visible ? "translate-y-0 scale-100 opacity-100 blur-none" : "translate-y-8 scale-[0.97] opacity-0 blur-sm"} ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
     >
       {children}
@@ -64,8 +76,16 @@ export default function Updates() {
   const [promoShown, setPromoShown] = useState(false)
   const [promoClosed, setPromoClosed] = useState(false)
   const [videoPaused, setVideoPaused] = useState(false)
+  const [slide, setSlide] = useState(0)
   const heroRef = useRef<HTMLDivElement>(null)
   const parallax = useParallax()
+  const badgeParallax = useParallax(-0.06, 40)
+  const tilt = useTilt<HTMLDivElement>(6)
+
+  useEffect(() => {
+    const id = setInterval(() => setSlide((s) => (s + 1) % HERO_SLIDES.length), 5000)
+    return () => clearInterval(id)
+  }, [])
 
   useEffect(() => {
     const onScroll = () => {
@@ -92,14 +112,23 @@ export default function Updates() {
       <section className="pt-3.5">
         <div className="mx-auto max-w-6xl px-5">
           <div ref={heroRef} className="relative min-h-[640px] overflow-hidden rounded-[32px]">
-            <img
-              src={img(IMG.villaPool, 1600)}
-              alt=""
-              className="absolute inset-0 h-full w-full scale-[1.02] object-cover transition-transform duration-100"
-              style={{ transform: `scale(1.02) translateY(${parallax}px)` }}
-            />
+            {HERO_SLIDES.map((s, i) => (
+              <img
+                key={s.id}
+                src={img(s.id, 1600)}
+                alt=""
+                className="absolute inset-0 h-full w-full scale-[1.02] object-cover transition-opacity duration-1000"
+                style={{ transform: `scale(1.02) translateY(${parallax}px)`, opacity: slide === i ? 1 : 0 }}
+              />
+            ))}
             <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/60" />
-            <div className="absolute right-[8%] top-1/3 hidden max-w-[230px] rounded-2xl bg-white p-4 text-sm font-semibold leading-snug text-ink shadow-2xl sm:block">
+            <div
+              ref={tilt.ref}
+              onMouseMove={tilt.onMouseMove}
+              onMouseLeave={tilt.onMouseLeave}
+              className="absolute right-[8%] top-1/3 hidden max-w-[230px] cursor-default rounded-2xl bg-white p-4 text-sm font-semibold leading-snug text-ink shadow-2xl transition-transform duration-200 sm:block"
+              style={{ transform: `translateY(${badgeParallax}px)` }}
+            >
               <div className="mb-1 flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wide text-accent">
                 <GradientSparkle size={12} /> Настя, ИИ-бот
               </div>
@@ -107,12 +136,32 @@ export default function Updates() {
             </div>
             <div className="relative z-10 w-full p-9 pb-11 text-white">
               <div className="mb-4 flex gap-2">
-                <span className="h-2 w-2 rounded-full bg-white/40" />
-                <span className="h-2 w-5 rounded-full bg-white" />
+                {HERO_SLIDES.map((s, i) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setSlide(i)}
+                    aria-label={`Слайд ${i + 1}`}
+                    className={`h-2 rounded-full transition-all duration-300 ${slide === i ? "w-5 bg-white" : "w-2 bg-white/40 hover:bg-white/70"}`}
+                  />
+                ))}
               </div>
               <h1 className="text-4xl font-bold leading-[1.02] tracking-tight sm:text-6xl">
-                Новые фишки,<br />которые меняют всё
+                {HERO_SLIDES[slide].title[0]}<br />{HERO_SLIDES[slide].title[1]}
               </h1>
+            </div>
+          </div>
+          <div className="mt-6 flex flex-wrap justify-center gap-x-10 gap-y-3 text-center">
+            <div>
+              <div className="text-2xl font-bold"><Counter to={1240} suffix="+" /></div>
+              <div className="text-xs text-muted">проверенных объектов</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold"><Counter to={98} suffix="%" /></div>
+              <div className="text-xs text-muted">точность цены</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold"><Counter to={12} suffix=" мин" /></div>
+              <div className="text-xs text-muted">средний ответ менеджера</div>
             </div>
           </div>
         </div>
@@ -149,14 +198,18 @@ export default function Updates() {
       </section>
 
       <section className="bg-section-orange px-5 pb-16">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3.5 md:flex-row">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-3.5 md:grid-cols-3 md:grid-rows-2">
           {[
-            [IMG.housePalm, "Вилла, Бангтао"],
-            [IMG.housePoolGreen, "Бассейн виллы"],
-            [IMG.livingModern, "Гостиная"],
-          ].map(([id, cap], i) => (
-            <Reveal key={id} delay={i * 180} className="relative flex-1 overflow-hidden rounded-2xl shadow-lg">
-              <img src={img(id, 800)} alt="" className="aspect-[16/10] w-full object-cover transition-transform hover:scale-105" />
+            [IMG.housePalm, "Вилла, Бангтао", "col-span-2 row-span-2 md:col-span-2"],
+            [IMG.housePoolGreen, "Бассейн виллы", "col-span-1"],
+            [IMG.poolUmbrella, "Терраса у бассейна", "col-span-1"],
+          ].map(([id, cap, span], i) => (
+            <Reveal key={id} delay={i * 150} className={`group relative overflow-hidden rounded-2xl shadow-lg ${span}`}>
+              <img
+                src={img(id, 900)}
+                alt=""
+                className="aspect-[16/10] h-full w-full object-cover transition-transform duration-500 group-hover:scale-110 md:aspect-auto"
+              />
               <span className="absolute bottom-2.5 left-3 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-bold text-white">{cap}</span>
             </Reveal>
           ))}
@@ -249,11 +302,13 @@ export default function Updates() {
           <Carousel>
             {[
               [IMG.couchLiving, "Подбор, который понимает контекст", "Голосовой помощник (заглушка) запоминает твой бюджет и не переспрашивает."],
-              [IMG.housePalm, "Запоминает детали заявки", "Можно попросить запомнить контакты и дату просмотра."],
-              [IMG.villaPool, "Фильтр по языку общения", "Настрой, на каком языке удобно получать ответы."],
+              [IMG.poolTable, "Запоминает детали заявки", "Можно попросить запомнить контакты и дату просмотра."],
+              [IMG.poolView, "Фильтр по языку общения", "Настрой, на каком языке удобно получать ответы."],
             ].map(([id, title, text]) => (
-              <div key={id} className="w-[82%] flex-none snap-start overflow-hidden rounded-2xl bg-white/8 sm:w-[60%] lg:w-[32%]">
-                <img src={img(id, 700)} alt="" className="aspect-video w-full object-cover" />
+              <div key={id} className="group w-[82%] flex-none snap-start overflow-hidden rounded-2xl bg-white/8 sm:w-[60%] lg:w-[32%]">
+                <div className="overflow-hidden">
+                  <img src={img(id, 700)} alt="" className="aspect-video w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                </div>
                 <div className="p-5">
                   <h4 className="mb-2.5 text-base font-semibold">{title}</h4>
                   <p className="text-[13px] leading-relaxed opacity-85">{text}</p>
@@ -295,10 +350,10 @@ export default function Updates() {
               [IMG.housePalm, "Гид по районам Пхукета", "Где лучше покупать под сдачу, а где — для себя."],
               [IMG.housePoolGreen, "Как проверить застройщика", "Пять признаков надёжного проекта."],
               [IMG.livingModern, "Ипотека для иностранцев", "Что реально работает на Пхукете в 2026."],
-              [IMG.couchLiving, "Аренда vs покупка", "Считаем окупаемость на реальных цифрах."],
+              [IMG.poolLounge, "Аренда vs покупка", "Считаем окупаемость на реальных цифрах."],
             ].map(([id, title, text]) => (
-              <div key={id} className="relative aspect-[3/4] w-[70%] flex-none snap-start overflow-hidden rounded-2xl bg-neutral-900 text-white transition-transform hover:-translate-y-1.5 sm:w-[40%] lg:w-[23%]">
-                <img src={img(id, 700)} alt="" className="absolute inset-0 h-full w-full object-cover brightness-90" />
+              <div key={id} className="group relative aspect-[3/4] w-[70%] flex-none snap-start overflow-hidden rounded-2xl bg-neutral-900 text-white transition-transform hover:-translate-y-1.5 sm:w-[40%] lg:w-[23%]">
+                <img src={img(id, 700)} alt="" className="absolute inset-0 h-full w-full object-cover brightness-90 transition-transform duration-500 group-hover:scale-110" />
                 <div className="relative z-10 flex h-full flex-col justify-end bg-gradient-to-t from-black/80 to-transparent p-5">
                   <h4 className="mb-2 text-[15px] font-semibold">{title}</h4>
                   <p className="mb-3 text-xs opacity-85">{text}</p>
